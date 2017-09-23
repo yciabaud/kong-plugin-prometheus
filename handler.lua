@@ -54,7 +54,12 @@ local function log(premature, conf, message)
     return
   end
 
-  local api_name   = string_gsub(message.api.name, "%.", "_")
+  local api_name
+  if message.api == nil then
+    api_name = "kong"
+  else
+    api_name = string_gsub(message.api.name, "%.", "_")
+  end
   local get_consumer_id = get_consumer_id[metric_config.consumer_identifier]
   local consumer_id     = get_consumer_id(message.consumer)
 
