@@ -34,7 +34,7 @@ endpoint.
 parameter                     | default | description
 ---                           | ---     | ---
 `name`                        |         | The name of the plugin to use, in this case: `prometheus`
-`consumer_id`<br>*optional*   |         | The CONSUMER ID that this plugin configuration will target. This value can only be used if [authentication has been enabled][faq-authentication] so that the system can identify the user making the request.
+`consumer_id`<br>*optional*   |         | The CONSUMER ID that this plugin configuration will target. This value can only be used if authentication has been enabled so that the system can identify the user making the request.
 `config.uri`<br>*optional*   | `/metrics` | The URI of the endpoint created on the admin API
 `config.metrics`<br>*optional* | All metrics<br>are logged | List of Metrics to be logged. Available values are described under [Metrics](#metrics).
 `config.prefix`<br>*optional* | `kong` | String to be prefixed to each metric's name.
