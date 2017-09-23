@@ -34,7 +34,6 @@ endpoint.
 parameter                       | default | description
 ---                             | ---     | ---
 `name`                          |         | The name of the plugin to use, in this case: `prometheus`
-`config.uri`<br>*optional*      | `/metrics` | The URI of the endpoint created on the admin API
 `config.metrics`<br>*optional*  | All metrics<br>are logged | List of Metrics to be logged. Available values are described under [Metrics](#metrics).
 `config.dict_name`<br>*optional*| `prometheus_metrics` | The name of the nginx shared dictionary which will be used to store all metrics.
 `config.prefix`<br>*optional*   | `kong` | String to be prefixed to each metric's name.

@@ -53,7 +53,6 @@ return {
           api_id  = prometheus.api_id,
           enabled = prometheus.enabled,
           config  = {
-            path    = "/metrics",
             metrics = new_metrics,
             prefix  = "kong",
             dict_name = "prometheus_metrics",

@@ -85,7 +85,7 @@ local function check_schema(value)
         return false, "unrecognized stat_label: " .. label
       end
     end
-    
+
   end
 
   return true
@@ -94,10 +94,6 @@ end
 
 return {
   fields = {
-    path    = {
-      type     = "string",
-      default  = "/metrics",
-    },
     metrics = {
       type     = "array",
       default  = default_metrics,

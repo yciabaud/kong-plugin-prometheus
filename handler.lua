@@ -108,8 +108,6 @@ local function log(premature, conf, message)
       update_metric(metric_name, stat_value, stat_labels)
     end
   end
-  
-  prometheus:collect()
 end
 
 
