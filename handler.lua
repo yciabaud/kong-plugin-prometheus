@@ -1,7 +1,6 @@
 local BasePlugin       = require "kong.plugins.base_plugin"
 local basic_serializer = require "kong.plugins.log-serializers.basic"
 local prometheus    = require "kong.plugins.prometheus.prometheus"
-local singletons = require "kong.singletons"
 
 local ngx_log       = ngx.log
 local ngx_timer_at  = ngx.timer.at
@@ -9,7 +8,6 @@ local string_gsub   = string.gsub
 local pairs         = pairs
 local string_format = string.format
 local NGX_ERR       = ngx.ERR
-local apis_dao = singletons.dao.apis
 
 
 local PrometheusHandler = BasePlugin:extend()
@@ -32,24 +30,24 @@ local function update_metric(metric_name, stat_type, stat_value, label_values)
     local counter = prometheus:get(metric_name)
     counter:inc(stat_value, label_values)
     
-  else if stat_type == "gauge" then
+  elseif stat_type == "gauge" then
     local gauge = prometheus:get(metric_name)
     gauge:set(stat_value, label_values)
 
-  else if stat_type == "histogram" then
+  elseif stat_type == "histogram" then
     local histogram = prometheus:get(metric_name)
     histogram:observe(stat_value, label_values)
   end
 end
 
-local function map_labels(labels, values) {
+local function map_labels(labels, values)
   mapped = {}
   for _, label in pairs(labels) do
     table.insert(mapped, values[label])
   end
 
   return mapped
-}
+end
 
 local function log(premature, conf, message)
   if premature then
@@ -116,29 +114,38 @@ function PrometheusHandler:new()
 end
 
 function PrometheusHandler:init_worker(config)
+  PrometheusHandler.super.init_worker(self)
+  if (config == nil) then
+    ngx_log(NGX_ERR, "Prometheus: no configuration in init_worker")
+    return
+  end
   prometheus.init(config.dict_name)
 
-  for _, metric_config in pairs(conf.metrics) do
+  for _, metric_config in pairs(config.metrics) do
     if metric_config.stat_type == "counter" then
       prometheus:counter(metric_config.name, metric_config.description, metric_config.labels)
     
-    else if metric_config.stat_type == "gauge" then
+    elseif metric_config.stat_type == "gauge" then
       prometheus:gauge(metric_config.name, metric_config.description, metric_config.labels)
 
-    else if metric_config.stat_type == "histogram" then
+    elseif metric_config.stat_type == "histogram" then
       prometheus:histogram(metric_config.name, metric_config.description, metric_config.labels, metric_config.buckets )
     end
   end
 end
 
-function PrometheusHandler:log(conf)
+function PrometheusHandler:log(config)
   PrometheusHandler.super.log(self)
+  if (config == nil) then
+    ngx_log(NGX_ERR, "Prometheus: no configuration in log")
+    return
+  end
 
   local message = basic_serializer.serialize(ngx)
 
-  local ok, err = ngx_timer_at(0, log, conf, message)
+  local ok, err = ngx_timer_at(0, log, config, message)
   if not ok then
-    ngx_log(NGX_ERR, "failed to create timer: ", err)
+    ngx_log(NGX_ERR, "Prometheus: failed to create timer: ", err)
   end
 end
 

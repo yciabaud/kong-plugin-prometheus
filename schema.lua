@@ -1,10 +1,11 @@
 local metrics = {
-  ["request_count"]         = true,
-  ["latency"]               = true,
-  ["request_size"]          = true,
-  ["response_size"]         = true,
-  ["upstream_latency"]      = true,
-  ["kong_latency"]          = true,
+  ["http_requests_total"]            = true,
+  ["http_request_duration_seconds"]  = true,
+  ["http_request_size_bytes"]        = true,
+  ["http_response_size_bytes"]       = true,
+  ["http_upstream_duration_seconds"] = true,
+  ["http_kong_duration_seconds"]     = true,
+  ["http_connections"]               = true,
 }
 
 
@@ -14,10 +15,11 @@ local stat_types = {
   ["histogram"] = true,
 }
 
-local labels = {
+local stat_labels = {
   ["api"]    = true,
   ["state"]  = true,
   ["status"] = true,
+  ["user"] = true,
 }
 
 local default_metrics = {
@@ -99,7 +101,7 @@ return {
       default  = default_metrics,
       func     = check_schema,
     },
-    dict_name = {    {
+    dict_name = {
       type     = "string",
       default  = "prometheus_metrics",
     },
@@ -107,6 +109,5 @@ return {
       type     = "string",
       default  = "kong",
     },
-
   }
 }
