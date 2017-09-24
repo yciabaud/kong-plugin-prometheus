@@ -51,12 +51,12 @@ Metrics the plugin can expose in the prometheus format.
 
 Metric                     | description | namespace
 ---                        | ---         | ---
-`request_count`            | tracks api request | kong_http_requests_total
-`request_size`             | tracks api request's body size in bytes | kong_http_request_size_bytes
-`response_size`            | tracks api response's body size in bytes | kong_http_response_size_bytes
-`latency`                  | tracks the time interval between the request started and response received from the upstream server | kong_http_latency
-`upstream_latency`         | tracks the time it took for the final service to process the request | kong_http_upstream_latency
-`kong_latency`             | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
+`http_requests_total`            | tracks api request | kong_http_requests_total
+`http_request_size_bytes`             | tracks api request's body size in bytes | kong_http_request_size_bytes
+`http_response_size_bytes`            | tracks api response's body size in bytes | kong_http_response_size_bytes
+`http_request_duration_ms`                  | tracks the time interval between the request started and response received from the upstream server | kong_http_latency
+`http_upstream_latency`         | tracks the time it took for the final service to process the request | kong_http_upstream_latency
+`http_kong_latency`             | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
 
 ### Metric Fields
 
@@ -81,7 +81,7 @@ The module increments the `kong_metric_errors_total` metric if it encounters an 
 ## Caveats
 
 Please keep in mind that all metrics stored by this library are kept in a
-single shared dictionary (`lua_shared_dict`). By default, we use the `kong_cache` shared dict.
+single shared dictionary (`lua_shared_dict`). By default, we use the `kong_cache` shared dict so if you are using it remember to allow extra space to it.
 While exposing metrics the module has to list all dictionary keys, which has serious performance implications for
 dictionaries with large number of keys (in this case this means large number
 of metrics OR metrics with high label cardinality). Listing the keys has to
