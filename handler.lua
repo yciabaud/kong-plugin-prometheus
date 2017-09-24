@@ -1,7 +1,6 @@
 local BasePlugin       = require "kong.plugins.base_plugin"
 local basic_serializer = require "kong.plugins.log-serializers.basic"
 local logger           = require "kong.plugins.prometheus.logger"
-local prometheus       = require "kong.plugins.prometheus.prometheus"
 
 local ngx_log       = ngx.log
 local ngx_timer_at  = ngx.timer.at
@@ -13,18 +12,6 @@ local NGX_ERR       = ngx.ERR
 
 local PrometheusHandler = BasePlugin:extend()
 PrometheusHandler.PRIORITY = 11
-
-local get_consumer_id = {
-  consumer_id = function(consumer)
-    return consumer and string_gsub(consumer.id, "-", "_")
-  end,
-  custom_id   = function(consumer)
-    return consumer and consumer.custom_id
-  end,
-  username    = function(consumer)
-    return consumer and consumer.username
-  end
-}
 
 local function log(premature, conf, message)
   if premature then
@@ -39,13 +26,23 @@ function PrometheusHandler:new()
   PrometheusHandler.super.new(self, "prometheus")
 end
 
-function PrometheusHandler:init_worker(config)
+function PrometheusHandler:init_worker()
   PrometheusHandler.super.init_worker(self)
-  if (config == nil) then
-    ngx_log(NGX_ERR, "Prometheus: no configuration in init_worker")
-    return
+  
+  local singletons    = require "kong.singletons"
+  local dao_factory   = singletons.dao
+
+  -- load our existing plugins to get config
+  local plugins, err = dao_factory.plugins:find_all({
+    name = "prometheus",
+  })
+  if err then
+    ngx.log(ngx.ERR, "Prometheus: err in fetching plugins: ", err)
   end
-  logger:init(config)
+
+  for _, plugin in ipairs(plugins) do
+    logger:init(plugin.config)
+  end
 end
 
 function PrometheusHandler:log(config)

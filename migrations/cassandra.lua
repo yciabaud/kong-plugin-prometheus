@@ -8,27 +8,48 @@ return {
         return err
       end
 
-      local default_metrics = {
-        request_count = {
-          name        = "request_count",
+            local default_metrics = {
+        http_requests_total = {
+          name        = "http_requests_total",
+          description = "Number of HTTP requests",
           stat_type   = "counter",
+          labels      = {"api", "status", "user"},
         },
-        latency = {
-          name      = "latency",
-          stat_type = "gauge",
+        http_request_duration_ms = {
+          name        = "http_request_duration_ms",
+          description = "HTTP request latency",
+          stat_type   = "histogram",
+          labels      = {"api"},
         },
-        request_size = {
-          name      = "request_size",
-          stat_type = "gauge",
+        http_request_size_bytes = {
+          name        = "http_request_size_bytes",
+          description = "Size of HTTP responses",
+          stat_type   = "histogram",
+          labels      = {"api"},
+          buckets     = {10,100,1000,10000,100000,1000000},
         },
-        response_size = {
-          name      = "response_size",
-          stat_type = "counter",
+        http_response_size_bytes = {
+          name      = "http_response_size_bytes",
+          stat_type = "histogram",
+          labels      = {"api"},
+          buckets     = {10,100,1000,10000,100000,1000000},
         },
-        upstream_latency = {
-          name      = "upstream_latency",
-          stat_type = "gauge",
+        http_upstream_duration_ms = {
+          name      = "http_upstream_duration_ms",
+          stat_type = "histogram",
+          labels      = {"api"},
         },
+        http_kong_duration_ms = {
+          name      = "http_kong_duration_ms",
+          stat_type = "histogram",
+          labels      = {"api"},
+        },
+        http_connections = {
+          name        = "http_connections",
+          description = "Number of HTTP connections",
+          stat_type   = "gauge",
+          labels      = {"state"},
+        }
       }
 
       for i = 1, #plugins do

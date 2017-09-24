@@ -267,7 +267,7 @@ end
 --   an object that should be used to register metrics.
 function Prometheus.init(dict_name, prefix)
   local self = setmetatable({}, Prometheus)
-  self.dict = ngx.shared[dict_name or "prometheus_metrics"]
+  self.dict = ngx.shared[dict_name or "kong_cache"]
   self.help = {}
   if prefix then
     self.prefix = prefix
@@ -280,15 +280,15 @@ function Prometheus.init(dict_name, prefix)
   self.bucket_format = {}
   self.initialized = true
 
-  self:counter("kong_metric_errors_total",
+  self:counter("metric_errors_total",
     "Number of nginx-lua-prometheus errors")
-  self.dict:set("kong_metric_errors_total", 0)
+  self.dict:set("prometheus:metric_errors_total", 0)
   return self
 end
 
 function Prometheus:log_error(...)
   ngx.log(ngx.ERR, ...)
-  self.dict:incr("kong_metric_errors_total", 1)
+  self.dict:incr("prometheus:metric_errors_total", 1)
 end
 
 function Prometheus:log_error_kv(key, value, err)
@@ -406,7 +406,7 @@ end
 -- This overwrites existing values, so it should only be used when initializing
 -- metrics or when explicitely overwriting the previous value of a metric.
 function Prometheus:set_key(key, value)
-  local ok, err = self.dict:safe_set(key, value)
+  local ok, err = self.dict:safe_set("prometheus:" .. key, value)
   if not ok then
     self:log_error_kv(key, value, err)
   end
@@ -427,7 +427,7 @@ function Prometheus:inc(name, label_names, label_values, value)
     return
   end
 
-  local newval, err = self.dict:incr(key, value)
+  local newval, err = self.dict:incr("prometheus:" .. key, value)
   if newval then
     return
   end
@@ -453,14 +453,6 @@ end
 function Prometheus:set(name, label_names, label_values, value)
   local key = full_metric_name(name, label_names, label_values)
   self:set_key(key, value)
-end
-
--- Get a registered metric by its name
---
--- Args:
---   name: (string) short metric name without any labels.
-function Prometheus:get(name)
-  return self.registered[name]
 end
 
 -- Record a given value into a histogram metric.
@@ -516,21 +508,24 @@ function Prometheus:collect()
   local seen_metrics = {}
   for _, key in ipairs(keys) do
     local value, err = self.dict:get(key)
-    if value then
-      local short_name = short_metric_name(key)
-      if not seen_metrics[short_name] then
-        if self.help[short_name] then
-          ngx.say("# HELP " .. self.prefix .. short_name .. " " .. self.help[short_name])
+    if string.sub(key, 1, string.len("prometheus:")) == "prometheus:" then
+      if value then
+        key = string.sub(key,string.len("prometheus:")+1)
+        local short_name = short_metric_name(key)
+        if not seen_metrics[short_name] then
+          if self.help[short_name] then
+            ngx.say("# HELP " .. self.prefix .. short_name .. " " .. self.help[short_name])
+          end
+          if self.type[short_name] then
+            ngx.say("# TYPE " .. self.prefix .. short_name .. " " .. self.type[short_name])
+          end
+          seen_metrics[short_name] = true
         end
-        if self.type[short_name] then
-          ngx.say("# TYPE " .. self.prefix .. short_name .. " " .. self.type[short_name])
-        end
-        seen_metrics[short_name] = true
+        -- Replace "Inf" with "+Inf" in each metric's last bucket 'le' label.
+        ngx.say(self.prefix .. key:gsub('le="Inf"', 'le="+Inf"'), " ", value)
+      else
+        self:log_error("Error getting '", key, "': ", err)
       end
-      -- Replace "Inf" with "+Inf" in each metric's last bucket 'le' label.
-      ngx.say(self.prefix .. key:gsub('le="Inf"', 'le="+Inf"'), " ", value)
-    else
-      self:log_error("Error getting '", key, "': ", err)
     end
   end
 end

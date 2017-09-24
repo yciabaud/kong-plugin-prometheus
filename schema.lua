@@ -1,10 +1,10 @@
 local metrics = {
   ["http_requests_total"]            = true,
-  ["http_request_duration_seconds"]  = true,
+  ["http_request_duration_ms"]  = true,
   ["http_request_size_bytes"]        = true,
   ["http_response_size_bytes"]       = true,
-  ["http_upstream_duration_seconds"] = true,
-  ["http_kong_duration_seconds"]     = true,
+  ["http_upstream_duration_ms"] = true,
+  ["http_kong_duration_ms"]     = true,
   ["http_connections"]               = true,
 }
 
@@ -30,7 +30,7 @@ local default_metrics = {
     labels      = {"api", "status", "user"},
   },
   {
-    name        = "http_request_duration_seconds",
+    name        = "http_request_duration_ms",
     description = "HTTP request latency",
     stat_type   = "histogram",
     labels      = {"api"},
@@ -49,12 +49,12 @@ local default_metrics = {
     buckets     = {10,100,1000,10000,100000,1000000},
   },
   {
-    name      = "http_upstream_duration_seconds",
+    name      = "http_upstream_duration_ms",
     stat_type = "histogram",
     labels      = {"api"},
   },
   {
-    name      = "http_kong_duration_seconds",
+    name      = "http_kong_duration_ms",
     stat_type = "histogram",
     labels      = {"api"},
   },
@@ -103,7 +103,7 @@ return {
     },
     dict_name = {
       type     = "string",
-      default  = "prometheus_metrics",
+      default  = "kong_cache",
     },
     prefix = {
       type     = "string",

@@ -17,9 +17,13 @@ $ luarocks install kong-prometheus-plugin
 
 ## Configuration
 
+To store the metrics, you need to create a kong configuration template including a shared dictionnary:
+```
+lua_shared_dict prometheus_metrics 10M;
+```
+
 Configuring the plugin is straightforward, you can add it on top of an
-API by executing the following
-request on your Kong server:
+API by executing the following request on your Kong server:
 
 ```bash
 $ curl -X POST http://kong:8001/apis/{api}/plugins \
@@ -35,7 +39,7 @@ parameter                       | default | description
 ---                             | ---     | ---
 `name`                          |         | The name of the plugin to use, in this case: `prometheus`
 `config.metrics`<br>*optional*  | All metrics<br>are logged | List of Metrics to be logged. Available values are described under [Metrics](#metrics).
-`config.dict_name`<br>*optional*| `prometheus_metrics` | The name of the nginx shared dictionary which will be used to store all metrics.
+`config.dict_name`<br>*optional*| `kong_cache` | The name of the nginx shared dictionary which will be used to store all metrics.
 `config.prefix`<br>*optional*   | `kong` | String to be prefixed to each metric's name.
 
 
@@ -77,8 +81,8 @@ The module increments the `kong_metric_errors_total` metric if it encounters an 
 ## Caveats
 
 Please keep in mind that all metrics stored by this library are kept in a
-single shared dictionary (`lua_shared_dict`). While exposing metrics the module
-has to list all dictionary keys, which has serious performance implications for
+single shared dictionary (`lua_shared_dict`). By default, we use the `kong_cache` shared dict.
+While exposing metrics the module has to list all dictionary keys, which has serious performance implications for
 dictionaries with large number of keys (in this case this means large number
 of metrics OR metrics with high label cardinality). Listing the keys has to
 lock the dictionary, which blocks all threads that try to access it (i.e.
