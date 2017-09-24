@@ -17,11 +17,6 @@ $ luarocks install kong-prometheus-plugin
 
 ## Configuration
 
-To store the metrics, you need to create a kong configuration template including a shared dictionnary:
-```
-lua_shared_dict prometheus_metrics 10M;
-```
-
 Configuring the plugin is straightforward, you can add it on top of an
 API by executing the following request on your Kong server:
 
@@ -44,6 +39,11 @@ parameter                       | default | description
 
 
 ----
+
+If you use a custom shared dictionary to store the metrics, you need to create a kong configuration template including the shared dictionary:
+```
+lua_shared_dict prometheus_metrics 10M;
+```
 
 ## Metrics
 
