@@ -62,7 +62,7 @@ local default_metrics = {
     name        = "http_connections",
     description = "Number of HTTP connections",
     stat_type   = "gauge",
-    labels      = {"api", "state"},
+    labels      = {"state"},
   }
 }
 

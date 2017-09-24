@@ -23,6 +23,8 @@ build = {
   modules = {
     ["kong.plugins."..pluginName..".handler"] = "handler.lua",
     ["kong.plugins."..pluginName..".schema"] = "schema.lua",
+    ["kong.plugins."..pluginName..".api"] = "api.lua",
+    ["kong.plugins."..pluginName..".logger"] = "logger.lua",
     ["kong.plugins."..pluginName..".prometheus"] = "prometheus.lua",
   }
 }
