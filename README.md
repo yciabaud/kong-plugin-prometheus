@@ -47,7 +47,9 @@ lua_shared_dict prometheus_metrics 10M;
 
 ## Metrics
 
-Metrics the plugin can expose in the prometheus format.
+The plugin exposes is metrics on kong's admin endpoint (port 8001 by default) on the path `/prometheus/metrics`.
+
+Metrics the plugin can expose in the prometheus format:
 
 Metric                     | description | namespace
 ---                        | ---         | ---
