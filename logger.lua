@@ -77,8 +77,8 @@ function PrometheusLogger:log(message, config)
     api_name = string_gsub(message.api.name, "%.", "_")
   end
   local stat_value = {
-    http_request_size_bytes        = message.request.size,
-    http_response_size_bytes       = message.response.size,
+    http_request_size_bytes   = tonumber(message.request.size),
+    http_response_size_bytes  = tonumber(message.response.size),
     http_request_duration_ms  = message.latencies.request,
     http_upstream_duration_ms = message.latencies.proxy,
     http_kong_duration_ms     = message.latencies.kong,
