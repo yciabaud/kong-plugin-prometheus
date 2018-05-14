@@ -26,7 +26,7 @@ local function update_metric(metric_name, stat_type, stat_value, label_values)
 
   if stat_type == "counter" then
     metric:inc(stat_value, label_values)
-    
+
   elseif stat_type == "gauge" then
     metric:set(stat_value, label_values)
 
@@ -56,7 +56,7 @@ function PrometheusLogger:init(config)
     ngx_log(NGX_DEBUG, string.format("Prometheus: init metric %s", metric_config.name))
     if metric_config.stat_type == "counter" then
       metrics[metric_config.name] = prometheus:counter(metric_config.name, metric_config.description, metric_config.labels)
-    
+
     elseif metric_config.stat_type == "gauge" then
       metrics[metric_config.name] = prometheus:gauge(metric_config.name, metric_config.description, metric_config.labels)
 
@@ -77,18 +77,20 @@ function PrometheusLogger:log(message, config)
     api_name = string_gsub(message.api.name, "%.", "_")
   end
   local stat_value = {
-    http_request_size_bytes   = tonumber(message.request.size),
-    http_response_size_bytes  = tonumber(message.response.size),
-    http_request_duration_ms  = message.latencies.request,
-    http_upstream_duration_ms = message.latencies.proxy,
-    http_kong_duration_ms     = message.latencies.kong,
+    http_request_size_bytes        = tonumber(message.request.size),
+    http_response_size_bytes       = tonumber(message.response.size),
+    http_request_duration_ms       = message.latencies.request,
+    http_request_curr_duration_ms  = message.latencies.request,
+    http_upstream_duration_ms      = message.latencies.proxy,
+    http_upstream_curr_duration_ms = message.latencies.proxy,
+    http_kong_duration_ms          = message.latencies.kong,
     http_requests_total            = 1,
   }
 
   for _, metric_config in pairs(config.metrics) do
     local stat_value = stat_value[metric_config.name]
     if stat_value ~= nil then
-    
+
       local get_consumer_id = get_consumer_id[metric_config.consumer_identifier]
       local consumer_id
       if get_consumer_id ~= nil then

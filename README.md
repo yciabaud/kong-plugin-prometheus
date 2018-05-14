@@ -53,19 +53,21 @@ Metrics the plugin can expose in the prometheus format:
 
 Metric                     | description | namespace
 ---                        | ---         | ---
-`http_requests_total`            | tracks api request | kong_http_requests_total
-`http_request_size_bytes`             | tracks api request's body size in bytes | kong_http_request_size_bytes
-`http_response_size_bytes`            | tracks api response's body size in bytes | kong_http_response_size_bytes
-`http_request_duration_ms`                  | tracks the time interval between the request started and response received from the upstream server | kong_http_latency
-`http_upstream_latency`         | tracks the time it took for the final service to process the request | kong_http_upstream_latency
-`http_kong_latency`             | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
+`http_requests_total`      | tracks api request | kong_http_requests_total
+`http_request_size_bytes`  | tracks api request's body size in bytes | kong_http_request_size_bytes
+`http_response_size_bytes` | tracks api response's body size in bytes | kong_http_response_size_bytes
+`http_request_duration_ms` | tracks the time interval between the request started and response received from the upstream server, stored as bucket | kong_http_latency
+`http_request_curr_duration_ms` | tracks the current time interval between the request started and response received from the upstream server |
+`http_upstream_duration_ms`| tracks the time it took for the final service to process the request | kong_http_upstream_latency
+`http_upstream_curr_duration_ms`| tracks the current time it took for the final service to process the request |
+`http_kong_duration_ms`    | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
 
 ### Metric Fields
 
 Plugin can be configured with any combination of [Metrics](#metrics), with each entry containing the following fields.
 
 Field         | description                                             | allowed values
----           | ---                                                     | --- 
+---           | ---                                                     | ---
 `name`          | Prometheus metric's name                              | [Metrics](#metrics)          
 `stat_type`     | determines what sort of event the metric represents   | `gauge`, `counter` and `histogram`
 
