@@ -1,10 +1,12 @@
 local metrics = {
   ["http_requests_total"]            = true,
-  ["http_request_duration_ms"]  = true,
+  ["http_request_duration_ms"]       = true,
+  ["http_request_curr_duration_ms"]  = true,
   ["http_request_size_bytes"]        = true,
   ["http_response_size_bytes"]       = true,
-  ["http_upstream_duration_ms"] = true,
-  ["http_kong_duration_ms"]     = true,
+  ["http_upstream_duration_ms"]      = true,
+  ["http_upstream_curr_duration_ms"] = true,
+  ["http_kong_duration_ms"]          = true,
   ["http_connections"]               = true,
 }
 
@@ -36,6 +38,12 @@ local default_metrics = {
     labels      = {"api"},
   },
   {
+    name        = "http_request_curr_duration_ms",
+    description = "Current HTTP request latency",
+    stat_type   = "gauge",
+    labels      = {"api"},
+  },
+  {
     name        = "http_request_size_bytes",
     description = "Size of HTTP responses",
     stat_type   = "histogram",
@@ -51,6 +59,11 @@ local default_metrics = {
   {
     name      = "http_upstream_duration_ms",
     stat_type = "histogram",
+    labels      = {"api"},
+  },
+  {
+    name      = "http_upstream_curr_duration_ms",
+    stat_type = "gauge",
     labels      = {"api"},
   },
   {
