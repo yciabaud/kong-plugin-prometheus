@@ -17,7 +17,10 @@ end
 
 local function update_metric(metric_name, stat_type, stat_value, label_values)
   ngx_log(NGX_DEBUG, string.format("Prometheus: log metric %s (%s)", metric_name, stat_type))
-
+  if metrics == nil then
+    ngx_log(NGX_ERR, string.format("Prometheus: metrics dictionary not found"))
+    return
+  end
   local metric = metrics[metric_name]
   if metric == nil then
     ngx_log(NGX_ERR, string.format("Prometheus: metrics %s not found", metric_name))
@@ -68,6 +71,11 @@ function PrometheusLogger:init(config)
 end
 
 function PrometheusLogger:log(message, config)
+  if prometheus == nil then
+    ngx_log(NGX_DEBUG, string.format("Prometheus: plugin not initialized"))
+    PrometheusLogger:init(config)
+    return
+  end
   ngx_log(NGX_DEBUG, "Prometheus: logging metrics...")
 
   local api_name
@@ -77,11 +85,11 @@ function PrometheusLogger:log(message, config)
     api_name = string_gsub(message.api.name, "%.", "_")
   end
   local stat_value = {
-    http_request_size_bytes   = tonumber(message.request.size),
-    http_response_size_bytes  = tonumber(message.response.size),
-    http_request_duration_ms  = message.latencies.request,
-    http_upstream_duration_ms = message.latencies.proxy,
-    http_kong_duration_ms     = message.latencies.kong,
+    http_request_size_bytes        = tonumber(message.request.size),
+    http_response_size_bytes       = tonumber(message.response.size),
+    http_request_duration_ms       = tonumber(message.latencies.request),
+    http_upstream_duration_ms      = tonumber(message.latencies.proxy),
+    http_kong_duration_ms          = tonumber(message.latencies.kong),
     http_requests_total            = 1,
   }
 
@@ -108,6 +116,11 @@ function PrometheusLogger:log(message, config)
 end
 
 function PrometheusLogger:logAdmin(config)
+  if prometheus == nil then
+    ngx_log(NGX_DEBUG, string.format("Prometheus: plugin not initialized"))
+    PrometheusLogger:init(config)
+    return
+  end
   ngx_log(NGX_DEBUG, "Prometheus: logging metrics admin...")
 
   local stat_value
@@ -153,6 +166,10 @@ function PrometheusLogger:logAdmin(config)
 end
 
 function PrometheusLogger:collect()
+  if prometheus == nil then
+    ngx_log(NGX_ERR, string.format("Prometheus: plugin not initialized properly"))
+    return
+  end
   prometheus:collect()
 end
 

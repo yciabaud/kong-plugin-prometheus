@@ -39,6 +39,8 @@
 -- https://github.com/knyar/nginx-lua-prometheus
 -- Released under MIT license.
 
+local ngx_log       = ngx.log
+local NGX_ERR       = ngx.ERR
 
 -- Default set of latency buckets, 5ms to 10s:
 local DEFAULT_BUCKETS = {0.005, 0.01, 0.02, 0.03, 0.05, 0.075, 0.1, 0.2, 0.3,
@@ -268,6 +270,10 @@ end
 function Prometheus.init(dict_name, prefix)
   local self = setmetatable({}, Prometheus)
   self.dict = ngx.shared[dict_name or "kong_cache"]
+  if self.dict == nil then
+    ngx_log(NGX_ERR, string.format("Prometheus: dictionary %s not available", dict_name or "kong_cache"))
+    return
+  end
   self.help = {}
   if prefix then
     self.prefix = prefix
@@ -494,6 +500,7 @@ end
 -- It will get the metrics from the dictionary, sort them, and expose them
 -- aling with TYPE and HELP comments.
 function Prometheus:collect()
+  ngx.status = 200
   ngx.header.content_type = "text/plain"
   if not self.initialized then
     ngx.log(ngx.ERR, "Prometheus module has not been initialized")
@@ -528,6 +535,7 @@ function Prometheus:collect()
       end
     end
   end
+  return ngx.exit(200)
 end
 
 return Prometheus
