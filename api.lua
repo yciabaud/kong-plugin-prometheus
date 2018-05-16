@@ -16,8 +16,7 @@ return {
         logger:logAdmin(plugin.config)
       end 
 
-      logger:collect()
-      helpers.responses.send_HTTP_OK()  
+      return logger:collect()
     end
   }
 }
