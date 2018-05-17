@@ -1,11 +1,11 @@
 package = "kong-plugin-prometheus"
-version = "0.1.0-1"
+version = "0.1.1-1"
 
 supported_platforms = {"linux", "macosx"}
 source = {
   -- these are initially not required to make it work
   url = "git://github.com/yciabaud/kong-plugin-prometheus",
-  tag = "v0.1.0"
+  tag = "v0.1.1"
 }
 
 description = {

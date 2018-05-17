@@ -11,7 +11,7 @@ Exposes API [metrics](#metrics) for [Prometheus](https://prometheus.io) monitori
 
 Install the `luarocks` utility on your system then install it by doing:
 ```bash
-$ luarocks install kong-prometheus-plugin
+$ luarocks install kong-plugin-prometheus
 ```
 
 ## Configuration
@@ -95,8 +95,8 @@ might want to keep the number of metrics (and distinct metric label values) to
 a minimum.
 
 ## Credits
-- Adapted and maintained by Yoann Ciabaud [@yciabaud](#yciabaud)
-- :heart: kindly improved and tested by [@jayhding](#jayhding)
+- Adapted and maintained by Yoann Ciabaud [@yciabaud](https://github.com/yciabaud)
+- :heart: kindly improved and tested by [@jayhding](https://github.com/jayhding)
 
 ### Kong StatsD plugin
 - Source [Plugin](https://getkong.org/plugins/statsd/) created and maintained by the [Kong](https://getkong.org/) folks at [Mashape](https://www.mashape.com)
