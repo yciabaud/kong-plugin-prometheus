@@ -16,14 +16,15 @@ local function map_labels(labels, values)
 end
 
 local function update_metric(metric_name, stat_type, stat_value, label_values)
+  local metric_fullname = string.format("%s_%s", metric_name, stat_type)
   ngx_log(NGX_DEBUG, string.format("Prometheus: log metric %s (%s)", metric_name, stat_type))
   if metrics == nil then
     ngx_log(NGX_ERR, string.format("Prometheus: metrics dictionary not found"))
     return
   end
-  local metric = metrics[metric_name]
+  local metric = metrics[metric_fullname]
   if metric == nil then
-    ngx_log(NGX_ERR, string.format("Prometheus: metrics %s not found", metric_name))
+    ngx_log(NGX_ERR, string.format("Prometheus: metrics %s not found", metric_fullname))
     return
   end
 
@@ -56,15 +57,16 @@ function PrometheusLogger:init(config)
   metrics = {}
 
   for _, metric_config in pairs(config.metrics) do
-    ngx_log(NGX_DEBUG, string.format("Prometheus: init metric %s", metric_config.name))
+    local metric_fullname = string.format("%s_%s", metric_config.name, metric_config.stat_type)
+    ngx_log(NGX_DEBUG, string.format("Prometheus: init metric %s", metric_fullname))
     if metric_config.stat_type == "counter" then
-      metrics[metric_config.name] = prometheus:counter(metric_config.name, metric_config.description, metric_config.labels)
+      metrics[metric_fullname] = prometheus:counter(metric_fullname, metric_config.description, metric_config.labels)
     
     elseif metric_config.stat_type == "gauge" then
-      metrics[metric_config.name] = prometheus:gauge(metric_config.name, metric_config.description, metric_config.labels)
+      metrics[metric_fullname] = prometheus:gauge(metric_fullname, metric_config.description, metric_config.labels)
 
     elseif metric_config.stat_type == "histogram" then
-      metrics[metric_config.name] = prometheus:histogram(metric_config.name, metric_config.description, metric_config.labels, metric_config.buckets )
+      metrics[metric_fullname] = prometheus:histogram(metric_fullname, metric_config.description, metric_config.labels, metric_config.buckets )
     end
   end
   ngx_log(NGX_DEBUG, "Prometheus: metrics initialized")
