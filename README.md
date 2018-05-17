@@ -1,5 +1,4 @@
 # kong-prometheus-plugin
-**WIP - not ready yet**
 
 Widely inspired by [nginx-lua-prometheus](https://github.com/knyar/nginx-lua-prometheus/) NGINX module and the [Kong StatsD plugin](https://github.com/Mashape/kong/tree/master/kong/plugins/statsd).
 
@@ -51,23 +50,23 @@ The plugin exposes is metrics on kong's admin endpoint (port 8001 by default) on
 
 Metrics the plugin can expose in the prometheus format:
 
-Metric                     | description | namespace
----                        | ---         | ---
+Metric                           | description | namespace
+---                              | ---         | ---
 `http_requests_total`            | tracks api request | kong_http_requests_total
-`http_request_size_bytes`             | tracks api request's body size in bytes | kong_http_request_size_bytes
-`http_response_size_bytes`            | tracks api response's body size in bytes | kong_http_response_size_bytes
-`http_request_duration_ms`                  | tracks the time interval between the request started and response received from the upstream server | kong_http_latency
-`http_upstream_latency`         | tracks the time it took for the final service to process the request | kong_http_upstream_latency
-`http_kong_latency`             | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
+`http_request_size_bytes`        | tracks api request's body size in bytes | kong_http_request_size_bytes
+`http_response_size_bytes`       | tracks api response's body size in bytes | kong_http_response_size_bytes
+`http_request_duration_ms`       | tracks the time interval between the request started and response received from the upstream server | kong_http_latency
+`http_upstream_duration_ms`      | tracks the time it took for the final service to process the request | kong_http_upstream_latency
+`http_kong_duration_ms`          | tracks the internal Kong latency that it took to run all the plugins | kong_http_kong_latency
 
 ### Metric Fields
 
 Plugin can be configured with any combination of [Metrics](#metrics), with each entry containing the following fields.
 
-Field         | description                                             | allowed values
----           | ---                                                     | --- 
-`name`          | Prometheus metric's name                              | [Metrics](#metrics)          
-`stat_type`     | determines what sort of event the metric represents   | `gauge`, `counter` and `histogram`
+Field         | description                                           | allowed values
+---           | ---                                                   | --- 
+`name`        | Prometheus metric's name                              | [Metrics](#metrics)          
+`stat_type`   | determines what sort of event the metric represents   | `gauge`, `counter` and `histogram`
 
 ## Kong Process Errors
 
@@ -96,7 +95,8 @@ might want to keep the number of metrics (and distinct metric label values) to
 a minimum.
 
 ## Credits
-- Adapted and maintained by Yoann Ciabaud (@yciabaud)
+- Adapted and maintained by Yoann Ciabaud [@yciabaud](#yciabaud)
+- :heart: kindly improved and tested by [@jayhding](#jayhding)
 
 ### Kong StatsD plugin
 - Source [Plugin](https://getkong.org/plugins/statsd/) created and maintained by the [Kong](https://getkong.org/) folks at [Mashape](https://www.mashape.com)

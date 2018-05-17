@@ -1,11 +1,11 @@
 local metrics = {
-  ["http_requests_total"]            = true,
+  ["http_requests_total"]       = true,
   ["http_request_duration_ms"]  = true,
-  ["http_request_size_bytes"]        = true,
-  ["http_response_size_bytes"]       = true,
+  ["http_request_size_bytes"]   = true,
+  ["http_response_size_bytes"]  = true,
   ["http_upstream_duration_ms"] = true,
   ["http_kong_duration_ms"]     = true,
-  ["http_connections"]               = true,
+  ["http_connections"]          = true,
 }
 
 
@@ -51,6 +51,11 @@ local default_metrics = {
   {
     name      = "http_upstream_duration_ms",
     stat_type = "histogram",
+    labels      = {"api"},
+  },
+  {
+    name      = "http_upstream_duration_ms",
+    stat_type = "gauge",
     labels      = {"api"},
   },
   {
