@@ -34,6 +34,8 @@ local default_metrics = {
     description = "HTTP request latency",
     stat_type   = "histogram",
     labels      = {"api"},
+    -- Default set of latency buckets, 1ms to 10s:
+    buckets     = {1,5,10,100,1000,10000,100000},
   },
   {
     name        = "http_request_size_bytes",
@@ -52,6 +54,7 @@ local default_metrics = {
     name      = "http_upstream_duration_ms",
     stat_type = "histogram",
     labels      = {"api"},
+    buckets     = {1,5,10,100,1000,10000,100000},
   },
   {
     name      = "http_upstream_duration_ms",
@@ -62,6 +65,7 @@ local default_metrics = {
     name      = "http_kong_duration_ms",
     stat_type = "histogram",
     labels      = {"api"},
+    buckets     = {1,5,10,100,1000,10000,100000},
   },
   {
     name        = "http_connections",
